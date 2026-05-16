@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>🔮 Gender Reveal Tarot Bingo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-deep:    #0a0716;
+    --bg-mid:     #17102a;
+    --bg-card:    #1d152e;
+    --bg-card2:   #2a1f42;
+    --gold:       #e5c060;
+    --gold-light: #f5d88a;
+    --gold-dim:   #7a6030;
+    --purple-dim: #5a447a;
+    --text-cream: #f1e4c3;
+    --text-muted: #a08868;
+    --pink:       #ff79c6;
+    --pink-glow:  rgba(255,121,198,0.55);
+    --blue-heart: #7ec8f5;
+  }
+
+  html, body {
+    min-height: 100%;
+    background: radial-gradient(ellipse at 30% 20%, #1a0f30 0%, var(--bg-deep) 60%),
+                radial-gradient(ellipse at 80% 80%, #0d1525 0%, transparent 60%);
+    background-color: var(--bg-deep);
+    color: var(--text-cream);
+    font-family: 'Noto Serif KR', 'Georgia', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  /* ── 별빛 배경 ── */
+  .stars {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 42% 8%,  rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 68% 35%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 88% 12%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 77% 72%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 88%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 5%  90%, rgba(229,192,96,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 93% 55%, rgba(229,192,96,0.3) 0%, transparent 100%);
+  }
+
+  /* ── 메인 컨테이너 ── */
+  .container {
+    position: relative; z-index: 1;
+    width: 100%;
+    max-width: 480px;
+    padding: 32px 20px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* ── 언어 토글 ── */
+  .lang-toggle {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--gold-dim);
+    border-radius: 999px;
+    overflow: hidden;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+  }
+  .lang-btn {
+    padding: 7px 18px;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .lang-btn.active {
+    background: var(--gold-dim);
+    color: var(--gold-light);
+  }
+
+  /* ── 장식 구분선 ── */
+  .ornament {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%;
+  }
+  .ornament-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  }
+  .ornament-diamond {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ── 타이틀 ── */
+  .title-wrap { text-align: center; }
+  .title-glyph { font-size: 28px; line-height: 1; margin-bottom: 10px; }
+  .title-main {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(18px, 5vw, 26px);
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.05em;
+    line-height: 1.35;
+    text-shadow: 0 0 30px rgba(229,192,96,0.4);
+  }
+  .title-sub {
+    margin-top: 8px;
+    font-size: clamp(12px, 3vw, 14px);
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-family: 'Noto Serif KR', serif;
+  }
+
+  /* ── 빙고판 ── */
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    width: 100%;
+  }
+
+  /* ── 카드 ── */
+  .card {
+    aspect-ratio: 2 / 3;
+    border-radius: 10px;
+    border: 1.5px solid var(--gold-dim);
+    background: linear-gradient(160deg, var(--bg-card), var(--bg-card2));
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(22px, 6vw, 36px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 30%, rgba(229,192,96,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  /* 카드 모서리 장식 */
+  .card::after {
+    content: '✦';
+    position: absolute;
+    top: 5px; left: 7px;
+    font-size: 8px;
+    color: var(--gold-dim);
+    opacity: 0.6;
+  }
+  .card:not(.flipped):hover {
+    transform: translateY(-4px) scale(1.02);
+    border-color: var(--gold);
+    box-shadow: 0 8px 24px rgba(229,192,96,0.25), 0 0 0 1px rgba(229,192,96,0.1);
+  }
+  .card:not(.flipped):active {
+    transform: translateY(-1px) scale(0.98);
+  }
+  .card-back-icon {
+    color: var(--gold);
+    font-size: clamp(20px, 5vw, 32px);
+    text-shadow: 0 0 12px rgba(229,192,96,0.5);
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  /* 뒤집힌 카드 */
+  .card.flipped {
+    cursor: default;
+    background: #0e0918;
+    border-color: var(--purple-dim);
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .card.flipped::after { opacity: 0.2; }
+  .card.flip-anim {
+    animation: flip-in 0.35s ease-out forwards;
+  }
+
+  /* 카드 플립 애니메이션 */
+  @keyframes flip-in {
+    0%   { transform: rotateY(90deg) scale(0.8); opacity: 0; }
+    60%  { transform: rotateY(-8deg) scale(1.05); opacity: 1; }
+    100% { transform: rotateY(0deg) scale(1); opacity: 1; }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { text-shadow: 0 0 10px rgba(229,192,96,0.4); }
+    50%       { text-shadow: 0 0 22px rgba(229,192,96,0.75); }
+  }
+
+  /* ── 카운터 ── */
+  .counter {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+  .counter strong { color: var(--gold-light); }
+
+  /* ── 진행 바 ── */
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--gold-dim), var(--gold));
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── 리셋 버튼 ── */
+  .reset-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    border-radius: 999px;
+    padding: 9px 28px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover {
+    color: var(--gold-light);
+    border-color: var(--gold);
+    background: rgba(229,192,96,0.06);
+  }
+
+  /* ── 팝업 오버레이 ── */
+  .popup-overlay {
+    position: fixed; inset: 0;
+    background: rgba(8, 4, 18, 0.93);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    padding: 24px;
+  }
+  .popup-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .popup-box {
+    background: linear-gradient(140deg, #2c1a4d, #140d26);
+    border: 2px solid var(--pink);
+    border-radius: 24px;
+    padding: clamp(28px, 6vw, 52px) clamp(28px, 8vw, 64px);
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 0 60px var(--pink-glow);
+    transform: scale(0.75);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .popup-overlay.show .popup-box { transform: scale(1); }
+
+  .popup-glyph { font-size: 48px; margin-bottom: 16px; line-height: 1; }
+  .popup-main {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(20px, 5.5vw, 32px);
+    font-weight: 700;
+    color: var(--pink);
+    text-shadow: 0 0 20px var(--pink-glow);
+    line-height: 1.4;
+    margin-bottom: 14px;
+  }
+  .popup-sub {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(13px, 3.5vw, 17px);
+    color: var(--text-cream);
+    opacity: 0.85;
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  .popup-close {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--pink);
+    background: transparent;
+    border: 1px solid var(--pink);
+    border-radius: 999px;
+    padding: 8px 24px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .popup-close:hover { opacity: 1; }
+
+  /* ── 하트 컨페티 ── */
+  .confetti-container {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 9998;
+    overflow: hidden;
+  }
+  .confetti-heart {
+    position: absolute;
+    top: -40px;
+    font-size: 20px;
+    animation: fall linear forwards;
+    opacity: 0.9;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(0) rotate(0deg);   opacity: 0.9; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* ── 반응형 ── */
+  @media (max-width: 360px) {
+    .container { padding: 24px 12px 36px; gap: 16px; }
+    .board { gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<!-- 하트 컨페티 -->
+<div class="confetti-container" id="confetti"></div>
+
+<!-- 팝업 -->
+<div class="popup-overlay" id="popup">
+  <div class="popup-box">
+    <div class="popup-glyph">💖</div>
+    <div class="popup-main" id="popup-main"></div>
+    <div class="popup-sub"  id="popup-sub"></div>
+    <button class="popup-close" onclick="closePopup()" id="popup-close-btn"></button>
+  </div>
+</div>
+
+<!-- 본문 -->
+<div class="container">
+
+  <!-- 언어 토글 -->
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn"        id="btn-en" onclick="setLang('en')">English</button>
+  </div>
+
+  <!-- 장식선 -->
+  <div class="ornament">
+    <div class="ornament-line"></div>
+    <div class="ornament-diamond"></div>
+    <div class="ornament-line"></div>
+  </div>
+
+  <!-- 타이틀 -->
+  <div class="title-wrap">
+    <div class="title-glyph">🔮</div>
+    <div class="title-main" id="title-main"></div>
+    <div class="title-sub"  id="title-sub"></div>
+  </div>
+
+  <!-- 장식선 -->
+  <div class="ornament">
+    <div class="ornament-line"></div>
+    <div class="ornament-diamond"></div>
+    <div class="ornament-line"></div>
+  </div>
+
+  <!-- 3×3 빙고판 -->
+  <div class="board" id="board"></div>
+
+  <!-- 카운터 + 진행 바 -->
+  <div style="width:100%; display:flex; flex-direction:column; gap:8px; align-items:center;">
+    <div class="counter" id="counter"></div>
+    <div class="progress-track" style="width:80%;">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- 리셋 -->
+  <button class="reset-btn" id="reset-btn" onclick="resetGame()"></button>
+
+</div>
+
+<script>
+const T = {
+  ko: {
+    title:    '꽁냥이는 공주님? 왕자님?',
+    sub:      '신비로운 타로 카드를 뒤집어\n꽁냥이의 성별을 확인해보세요',
+    counter:  (n) => `분홍 하트 <strong>${n}</strong> / 5 발견`,
+    winMain:  '💖 꽁냥이는 공주님! 💖',
+    winSub:   '✨ 예쁜 이모, 삼촌들 곧 만나요! ✨',
+    close:    '닫기',
+    reset:    '다시 하기 ↺',
+  },
+  en: {
+    title:    'Boy? or Girl?',
+    sub:      'Flip the tarot cards to reveal\nthe baby\'s gender',
+    counter:  (n) => `Pink hearts: <strong>${n}</strong> / 5 found`,
+    winMain:  '💖 Baby\'s a girl! 💖',
+    winSub:   'A little princess is coming to steal\nGrandma and Grandpa\'s hearts! 👵👴',
+    close:    'Close',
+    reset:    'Play Again ↺',
+  }
+};
+
+let lang = 'ko';
+let board = [];
+let revealed = [];
+let pinkCount = 0;
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function initGame() {
+  board = shuffle(['P','P','P','P','P','B','B','B','B']);
+  revealed = Array(9).fill(false);
+  pinkCount = 0;
+  renderBoard();
+  updateUI();
+  document.getElementById('confetti').innerHTML = '';
+  closePopup();
+}
+
+function renderBoard() {
+  const el = document.getElementById('board');
+  el.innerHTML = '';
+  for (let i = 0; i < 9; i++) {
+    const card = document.createElement('div');
+    card.className = 'card' + (revealed[i] ? ' flipped' : '');
+    if (revealed[i]) {
+      const emoji = board[i] === 'P' ? '💖' : '💙';
+      card.textContent = emoji;
+    } else {
+      const icon = document.createElement('span');
+      icon.className = 'card-back-icon';
+      icon.textContent = '✦';
+      card.appendChild(icon);
+      card.addEventListener('click', () => flipCard(i));
+    }
+    el.appendChild(card);
+  }
+}
+
+function flipCard(idx) {
+  if (revealed[idx]) return;
+  revealed[idx] = true;
+  if (board[idx] === 'P') pinkCount++;
+
+  // 카드 재렌더 + 플립 애니메이션
+  const cards = document.querySelectorAll('.card');
+  const card = cards[idx];
+  const emoji = board[idx] === 'P' ? '💖' : '💙';
+  card.innerHTML = emoji;
+  card.classList.add('flipped', 'flip-anim');
+  card.removeEventListener('click', () => {});
+
+  updateUI();
+
+  if (pinkCount === 5) {
+    setTimeout(showWin, 500);
+  }
+}
+
+function updateUI() {
+  const t = T[lang];
+  document.getElementById('counter').innerHTML = t.counter(pinkCount);
+  document.getElementById('progress-fill').style.width = (pinkCount / 5 * 100) + '%';
+}
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('btn-ko').classList.toggle('active', l === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', l === 'en');
+  const t = T[l];
+  document.getElementById('title-main').textContent = t.title;
+  document.getElementById('title-sub').style.whiteSpace = 'pre-line';
+  document.getElementById('title-sub').textContent  = t.sub;
+  document.getElementById('reset-btn').textContent  = t.reset;
+  document.getElementById('popup-close-btn').textContent = t.close;
+  updateUI();
+}
+
+function showWin() {
+  const t = T[lang];
+  document.getElementById('popup-main').textContent = t.winMain;
+  document.getElementById('popup-sub').style.whiteSpace = 'pre-line';
+  document.getElementById('popup-sub').textContent  = t.winSub;
+  document.getElementById('popup').classList.add('show');
+  launchConfetti();
+}
+
+function closePopup() {
+  document.getElementById('popup').classList.remove('show');
+}
+
+function resetGame() {
+  initGame();
+}
+
+function launchConfetti() {
+  const container = document.getElementById('confetti');
+  container.innerHTML = '';
+  const emojis = ['💖','💗','✨','💫','🌸','💕'];
+  for (let i = 0; i < 40; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-heart';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left    = Math.random() * 100 + 'vw';
+      el.style.fontSize = (14 + Math.random() * 18) + 'px';
+      const dur = 2.5 + Math.random() * 2;
+      el.style.animationDuration = dur + 's';
+      container.appendChild(el);
+      setTimeout(() => el.remove(), dur * 1000);
+    }, i * 80);
+  }
+}
+
+// 초기 실행
+setLang('ko');
+initGame();
+</script>
+</body>
+</html>
