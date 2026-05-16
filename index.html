@@ -461,7 +461,7 @@ function flipCard(idx) {
   updateUI();
 
   if (pinkCount === 5) {
-    setTimeout(showWin, 500);
+    showWin();
   }
 }
 
@@ -487,8 +487,9 @@ function showWin() {
   document.getElementById('popup-main').textContent = t.winMain;
   document.getElementById('popup-sub').style.whiteSpace = 'pre-line';
   document.getElementById('popup-sub').textContent  = t.winSub;
-  document.getElementById('popup').classList.add('show');
+  // 팝업 + 폭죽 동시 실행
   launchFireworks();
+  document.getElementById('popup').classList.add('show');
 }
 
 function closePopup() {
