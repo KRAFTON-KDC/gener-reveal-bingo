@@ -2,102 +2,166 @@ import streamlit as st
 import random
 
 # 페이지 기본 설정
-st.set_page_config(page_title="Gender Reveal Bingo", page_icon="👶", layout="centered")
+st.set_page_config(page_title="Gender Reveal Tarot Bingo", page_icon="🔮", layout="centered")
 
-# CSS를 활용해 카드 간격을 줄이고 디자인을 스크린샷처럼 예쁘게 수정
+# 신비로운 타로 카드 감성의 고급 CSS 스타일링
 st.markdown("""
     <style>
-    /* 전체 배경을 어둡게 */
+    /* 전체 배경: 깊고 어두운 우주/타로 감성 */
     .stApp {
-        background-color: #11141a;
+        background: linear-gradient(135deg, #0f0c1b, #201a30, #0f0c1b);
     }
     
-    /* 3x3 빙고판을 감싸는 컨테이너 간격 조절 */
+    /* 제목 및 레이블 텍스트 스타일 */
+    h1, p, label {
+        text-align: center !important;
+        color: #f1e4c3 !important; /* 부드러운 골드빛 텍스트 */
+        font-family: 'Georgia', serif;
+    }
+    
+    /* 라디오 버튼 정렬 중앙 배치 */
+    [data-testid="stRadio"] > div {
+        justify-content: center !important;
+    }
+
+    /* 🔥 핵심: 3x3 카드가 완전히 밀착되도록 간격 제거 */
     [data-testid="stHorizontalBlock"] {
-        gap: 15px !important; /* 카드 좌우 간격을 좁게 설정 */
-        margin-bottom: 15px;  /* 카드 상하 간격 설정 */
+        gap: 0px !important; 
+        margin-bottom: 0px !important;
+        padding: 0px !important;
+    }
+    [data-testid="column"] {
+        padding: 2px !important; /* 카드 간의 아주 미세한 경계선만 남김 */
     }
     
-    /* 버튼(카드) 디자인 수정 */
+    /* 🔮 예쁜 타로 카드 뒷면/앞면 디자인 변경 */
     div.stButton > button {
-        font-size: 28px !important;
-        height: 140px !important; /* 가로세로 비율을 스크린샷처럼 세로가 길게 설정 */
+        font-size: 32px !important;
+        height: 160px !important; /* 세로가 긴 타로 카드 비율 */
         width: 100% !important;
-        background-color: #21242c !important; /* 카드 기본 배경색 */
-        color: #ff4a4a !important;            /* 물음표(?) 색상 (주황/빨강 계열) */
-        border: 1px solid #31353f !important; /* 카드 테두리 선 */
-        border-radius: 20px !important;       /* 부드러운 라운드 카드 효과 */
-        transition: all 0.3s ease;
+        background: linear-gradient(145deg, #1d152b, #2d2244) !important; /* 신비로운 보랏빛 밤 */
+        color: #e5c060 !important; /* 신비로운 주황/골드 빛 물음표 */
+        border: 2px solid #e5c060 !important; /* 화려한 골드 테두리 */
+        border-radius: 12px !important;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.5), inset 0px 0px 15px rgba(229,192,96,0.2) !important; /* 내부 발광 효과 */
+        text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
-    /* 카드가 뒤집혔을 때(disabled 상태)의 스타일 */
-    div.stButton > button:disabled {
-        background-color: #1a1c23 !important;
-        border: 1px solid #414654 !important;
-        color: white !important;
-        opacity: 1 !important; /* 흐려짐 방지 */
+    /* 카드 마우스 호버 효과 */
+    div.stButton > button:hover {
+        transform: translateY(-4px);
+        box-shadow: 0px 8px 20px rgba(229,192,96,0.4) !important;
+        border-color: #fff !important;
     }
+    
+    /* 오픈된 타로 카드 스타일 (disabled 상태) */
+    div.stButton > button:disabled {
+        background: #110b1a !important;
+        border: 2px solid #5a447a !important;
+        opacity: 1 !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    /* 🚨 축하 화면 오버레이 (화면 중앙 큰 팝업창 효과) */
+    .popup-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background-color: rgba(10, 5, 20, 0.9);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+    
+    .popup-content {
+        background: linear-gradient(135deg, #2c1a4d, #140d26);
+        padding: 40px 60px;
+        border-radius: 25px;
+        border: 3px solid #ff79c6; /* 공주님을 뜻하는 핑크 골드 테두리 */
+        text-align: center;
+        box-shadow: 0px 0px 50px rgba(255, 121, 198, 0.6);
+        transform: scale(0.7);
+        animation: popUp 0.5s 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    
+    .popup-text {
+        font-size: 45px !important;
+        font-weight: bold;
+        color: #ff79c6 !important;
+        text-shadow: 0px 0px 20px rgba(255, 121, 198, 0.8);
+        font-family: 'MaplestoryOTFBold', 'Malgun Gothic', sans-serif;
+    }
+
+    /* 애니메이션 효과 */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popUp { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 """, unsafe_allow_html=True)
 
 # 1. 언어 선택 (국문 / 영문)
-language = st.radio("Language / 언어 선택", ["한국어 🇰🇷", "English 🇺🇸"], horizontal=True)
+language = st.radio("Language / 언어 선택", ["한국어 🇰🇷", "English 🇺🇸"])
 
 # 언어별 텍스트 설정
 if language == "한국어 🇰🇷":
-    title = "👶 꽁냥이는 공주님? 왕자님? 👶"
-    sub_title = "빙고 칸을 하나씩 눌러 꽁냥이의 성별을 확인해보세요!"
-    win_text = "🎉 꽁냥이는 공주님! 🎉"
+    title = "🔮 꽁냥이는 공주님? 왕자님? 🔮"
+    sub_title = "신비로운 타로 카드를 뒤집어 꽁냥이의 성별을 확인해보세요"
+    win_text = "💖 꽁냥이는 공주님! 💖"
 else:
-    title = "👶 Boy? or Girl? 👶"
-    sub_title = "Click the cells one by one to reveal the baby's gender!"
-    win_text = "🎉 Baby's a girl! 🎉"
+    title = "🔮 Boy? or Girl? 🔮"
+    sub_title = "Flip the tarot cards to reveal the baby's gender"
+    win_text = "💖 Baby's a girl! 💖"
 
-st.title(title)
-st.markdown(f"<p style='color: #8a8f98;'>{sub_title}</p>", unsafe_allow_html=True)
-st.write("---")
+st.markdown(f"<h1 style='font-size: 36px; font-weight: bold;'>{title}</h1>", unsafe_allow_html=True)
+st.markdown(f"<p style='font-size: 16px; margin-bottom: 30px;'>{sub_title}</p>", unsafe_allow_html=True)
 
 # 2. 게임 상태(세션) 초기화
 if 'board' not in st.session_state:
-    # 분홍 하트(💖) 5개, 파란 하트(💙) 4개 섞기
+    # 분홍 하트(💖) 5개, 파란 하트(💙) 4개 조합 생성 후 셔플
     hearts = ["💖"] * 5 + ["💙"] * 4
     random.shuffle(hearts)
     
-    # 데이터 저장
     st.session_state.board = [hearts[i:i+3] for i in range(0, 9, 3)]
     st.session_state.revealed = [[False]*3 for _ in range(3)]
     st.session_state.pink_count = 0
 
-# 상태 동기화
 board = st.session_state.board
 revealed = st.session_state.revealed
 
-# 3. 3x3 빙고판 화면에 그리기
+# 3. 3x3 밀착형 타로 빙고판 구현
 for r in range(3):
-    cols = st.columns(3) # 3열 레이러웃 생성
+    cols = st.columns(3)
     for c in range(3):
-        # 이미 뒤집힌 카드인 경우 하트 표시
         if revealed[r][c]:
+            # 뒤집힌 카드는 해당 하트 이모지를 보여줌
             cols[c].button(board[r][c], key=f"btn_{r}_{c}", disabled=True)
         else:
-            # 아직 안 뒤집힌 카드는 주황색 물음표(?) 표시
-            if cols[c].button("?", key=f"btn_{r}_{c}"):
-                st.session_state.revealed[r][r if r==c else c] = True # 세션 상태 직접 변경
+            # 타로 카드 뒷면 감성의 신비로운 눈 문양(✨)이나 물음표 구현
+            if cols[c].button("✨", key=f"btn_{r}_{c}"):
                 st.session_state.revealed[r][c] = True
-                
-                # 분홍 하트일 경우 카운트 증가
                 if board[r][c] == "💖":
                     st.session_state.pink_count += 1
-                
-                # 버튼을 누른 즉시 화면을 새로고침하여 카드가 뒤집히도록 처리
                 st.rerun()
 
-st.write("---")
+st.write("")
+st.write("")
 
-# 4. 성공 조건 확인 (분홍색 하트 5개가 모두 오픈되었을 때)
+# 4. 결과 창 (성공 시 전체 화면 중앙에 거대한 팝업창 띄우기)
 if st.session_state.pink_count == 5:
-    st.balloons()  # 폭죽 효과
-    st.success(win_text)
+    st.balloons() # 배경에 날아다니는 풍선 폭죽 효과
+    
+    # HTML/CSS 오버레이 팝업창 주입
+    st.markdown(f"""
+        <div class="popup-overlay">
+            <div class="popup-content">
+                <div class="popup-text">{win_text}</div>
+                <p style="margin-top:20px; color:#aaa !important; font-size:16px;">축하합니다! 축복 속에서 건강하게 자라나길 바랍니다.</p>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
 # 게임 리셋 버튼
 if st.button("다시 하기 / Reset 🔄", use_container_width=True):
