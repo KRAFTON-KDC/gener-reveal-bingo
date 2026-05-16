@@ -204,31 +204,6 @@
     50%       { text-shadow: 0 0 22px rgba(229,192,96,0.75); }
   }
 
-  /* ── 카운터 ── */
-  .counter {
-    font-family: 'Cinzel', serif;
-    font-size: 13px;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-    text-align: center;
-  }
-  .counter strong { color: var(--gold-light); }
-
-  /* ── 진행 바 ── */
-  .progress-track {
-    width: 100%;
-    height: 4px;
-    background: rgba(255,255,255,0.07);
-    border-radius: 999px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(to right, var(--gold-dim), var(--gold));
-    border-radius: 999px;
-    transition: width 0.4s ease;
-  }
-
   /* ── 리셋 버튼 ── */
   .reset-btn {
     font-family: 'Cinzel', serif;
@@ -387,14 +362,6 @@
   <!-- 3×3 빙고판 -->
   <div class="board" id="board"></div>
 
-  <!-- 카운터 + 진행 바 -->
-  <div style="width:100%; display:flex; flex-direction:column; gap:8px; align-items:center;">
-    <div class="counter" id="counter"></div>
-    <div class="progress-track" style="width:80%;">
-      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-    </div>
-  </div>
-
   <!-- 리셋 -->
   <button class="reset-btn" id="reset-btn" onclick="resetGame()"></button>
 
@@ -405,7 +372,6 @@ const T = {
   ko: {
     title:    '꽁냥이는 공주님? 왕자님?',
     sub:      '신비로운 타로 카드를 뒤집어\n꽁냥이의 성별을 확인해보세요',
-    counter:  (n) => `분홍 하트 <strong>${n}</strong> / 5 발견`,
     winMain:  '💖 꽁냥이는 공주님! 💖',
     winSub:   '✨ 예쁜 이모, 삼촌들 곧 만나요! ✨',
     close:    '닫기',
@@ -414,7 +380,6 @@ const T = {
   en: {
     title:    'Boy? or Girl?',
     sub:      'Flip the tarot cards to reveal\nthe baby\'s gender',
-    counter:  (n) => `Pink hearts: <strong>${n}</strong> / 5 found`,
     winMain:  '💖 Baby\'s a girl! 💖',
     winSub:   'A little princess is coming to steal\nGrandma and Grandpa\'s hearts! 👵👴',
     close:    'Close',
@@ -486,9 +451,7 @@ function flipCard(idx) {
 }
 
 function updateUI() {
-  const t = T[lang];
-  document.getElementById('counter').innerHTML = t.counter(pinkCount);
-  document.getElementById('progress-fill').style.width = (pinkCount / 5 * 100) + '%';
+  // 힌트 노출 없이 카드 상태만 관리
 }
 
 function setLang(l) {
