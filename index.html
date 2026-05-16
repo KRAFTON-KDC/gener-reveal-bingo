@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>🔮 Gender Reveal Tarot Bingo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Fredoka+One&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
@@ -57,8 +57,8 @@
   .container {
     position: relative; z-index: 1;
     width: 100%;
-    max-width: 480px;
-    padding: 32px 20px 48px;
+    max-width: 520px;
+    padding: 32px 24px 48px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -143,7 +143,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(22px, 6vw, 36px);
+    font-size: clamp(24px, 8vw, 40px);
     position: relative;
     overflow: hidden;
     transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -175,7 +175,7 @@
   }
   .card-back-icon {
     color: var(--gold);
-    font-size: clamp(20px, 5vw, 32px);
+    font-size: clamp(22px, 7vw, 34px);
     text-shadow: 0 0 12px rgba(229,192,96,0.5);
     animation: pulse-glow 3s ease-in-out infinite;
   }
@@ -297,10 +297,19 @@
     width: 100%; height: 100%;
   }
 
-  /* ── 반응형 ── */
-  @media (max-width: 360px) {
-    .container { padding: 24px 12px 36px; gap: 16px; }
+  /* ── 반응형: 태블릿 ── */
+  @media (max-width: 520px) {
+    .container { padding: 24px 12px 40px; gap: 16px; }
+    .board { gap: 5px; }
+  }
+
+  /* ── 반응형: 모바일 (360px 이하) ── */
+  @media (max-width: 390px) {
+    .container { padding: 20px 8px 36px; gap: 14px; }
     .board { gap: 4px; }
+    .title-glyph { font-size: 22px; }
+    .ornament { gap: 8px; }
+    .popup-box { padding: 20px 14px; }
   }
 </style>
 </head>
