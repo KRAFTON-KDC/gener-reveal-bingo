@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>🔮 Gender Reveal Tarot Bingo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Fredoka+One&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -31,7 +31,7 @@
                 radial-gradient(ellipse at 80% 80%, #0d1525 0%, transparent 60%);
     background-color: var(--bg-deep);
     color: var(--text-cream);
-    font-family: 'Noto Serif KR', 'Georgia', serif;
+    font-family: 'Gaegu', 'Noto Sans KR', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -72,7 +72,7 @@
     border: 1px solid var(--gold-dim);
     border-radius: 999px;
     overflow: hidden;
-    font-family: 'Cinzel', serif;
+    font-family: 'Fredoka One', 'Gaegu', sans-serif;
     font-size: 12px;
   }
   .lang-btn {
@@ -106,14 +106,14 @@
   }
 
   /* ── 타이틀 ── */
-  .title-wrap { text-align: center; }
+  .title-wrap { text-align: center; width: 100%; }
   .title-glyph { font-size: 28px; line-height: 1; margin-bottom: 10px; }
   .title-main {
-    font-family: 'Cinzel', serif;
+    font-family: 'Gaegu', 'Noto Sans KR', sans-serif;
     font-size: clamp(18px, 5vw, 26px);
     font-weight: 700;
     color: var(--gold-light);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.02em;
     line-height: 1.35;
     text-shadow: 0 0 30px rgba(229,192,96,0.4);
   }
@@ -122,7 +122,7 @@
     font-size: clamp(12px, 3vw, 14px);
     color: var(--text-muted);
     line-height: 1.6;
-    font-family: 'Noto Serif KR', serif;
+    font-family: 'Gaegu', 'Noto Sans KR', sans-serif;
   }
 
   /* ── 빙고판 ── */
@@ -206,7 +206,7 @@
 
   /* ── 리셋 버튼 ── */
   .reset-btn {
-    font-family: 'Cinzel', serif;
+    font-family: 'Fredoka One', 'Gaegu', sans-serif;
     font-size: 12px;
     letter-spacing: 0.1em;
     color: var(--text-muted);
@@ -244,7 +244,7 @@
     background: linear-gradient(140deg, #2c1a4d, #140d26);
     border: 2px solid var(--pink);
     border-radius: 24px;
-    padding: clamp(28px, 6vw, 52px) clamp(28px, 8vw, 64px);
+    padding: clamp(24px, 4vw, 44px) clamp(16px, 5vw, 40px);
     text-align: center;
     max-width: 420px;
     width: 100%;
@@ -256,16 +256,19 @@
 
   .popup-glyph { font-size: 48px; margin-bottom: 16px; line-height: 1; }
   .popup-main {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(20px, 5.5vw, 32px);
+    font-family: 'Gaegu', 'Noto Sans KR', sans-serif;
+    font-size: clamp(16px, 5vw, 30px);
     font-weight: 700;
     color: var(--pink);
     text-shadow: 0 0 20px var(--pink-glow);
-    line-height: 1.4;
+    line-height: 1.3;
     margin-bottom: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
   }
   .popup-sub {
-    font-family: 'Noto Serif KR', serif;
+    font-family: 'Gaegu', 'Noto Sans KR', sans-serif;
     font-size: clamp(13px, 3.5vw, 17px);
     color: var(--text-cream);
     opacity: 0.85;
@@ -273,7 +276,7 @@
     margin-bottom: 24px;
   }
   .popup-close {
-    font-family: 'Cinzel', serif;
+    font-family: 'Fredoka One', 'Gaegu', sans-serif;
     font-size: 12px;
     letter-spacing: 0.1em;
     color: var(--pink);
@@ -287,22 +290,11 @@
   }
   .popup-close:hover { opacity: 1; }
 
-  /* ── 하트 컨페티 ── */
-  .confetti-container {
+  /* ── 폭죽 캔버스 ── */
+  #fireworks-canvas {
     position: fixed; inset: 0;
     pointer-events: none; z-index: 9998;
-    overflow: hidden;
-  }
-  .confetti-heart {
-    position: absolute;
-    top: -40px;
-    font-size: 20px;
-    animation: fall linear forwards;
-    opacity: 0.9;
-  }
-  @keyframes fall {
-    0%   { transform: translateY(0) rotate(0deg);   opacity: 0.9; }
-    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    width: 100%; height: 100%;
   }
 
   /* ── 반응형 ── */
@@ -316,8 +308,7 @@
 
 <div class="stars"></div>
 
-<!-- 하트 컨페티 -->
-<div class="confetti-container" id="confetti"></div>
+<canvas id="fireworks-canvas"></canvas>
 
 <!-- 팝업 -->
 <div class="popup-overlay" id="popup">
@@ -406,7 +397,7 @@ function initGame() {
   pinkCount = 0;
   renderBoard();
   updateUI();
-  document.getElementById('confetti').innerHTML = '';
+  stopFireworks();
   closePopup();
 }
 
@@ -473,7 +464,7 @@ function showWin() {
   document.getElementById('popup-sub').style.whiteSpace = 'pre-line';
   document.getElementById('popup-sub').textContent  = t.winSub;
   document.getElementById('popup').classList.add('show');
-  launchConfetti();
+  launchFireworks();
 }
 
 function closePopup() {
@@ -484,23 +475,178 @@ function resetGame() {
   initGame();
 }
 
-function launchConfetti() {
-  const container = document.getElementById('confetti');
-  container.innerHTML = '';
-  const emojis = ['💖','💗','✨','💫','🌸','💕'];
-  for (let i = 0; i < 40; i++) {
-    setTimeout(() => {
-      const el = document.createElement('div');
-      el.className = 'confetti-heart';
-      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      el.style.left    = Math.random() * 100 + 'vw';
-      el.style.fontSize = (14 + Math.random() * 18) + 'px';
-      const dur = 2.5 + Math.random() * 2;
-      el.style.animationDuration = dur + 's';
-      container.appendChild(el);
-      setTimeout(() => el.remove(), dur * 1000);
-    }, i * 80);
+/* ── 폭죽 엔진 (Canvas) ── */
+const fwCanvas = document.getElementById('fireworks-canvas');
+const fwCtx    = fwCanvas.getContext('2d');
+let fwAnimId   = null;
+let fwParticles = [];
+let fwRockets   = [];
+
+function resizeFwCanvas() {
+  fwCanvas.width  = window.innerWidth;
+  fwCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeFwCanvas);
+resizeFwCanvas();
+
+// 파스텔 핑크·라벤더·골드 계열 색상
+const FW_COLORS = [
+  '#ff79c6','#ffb3e6','#ff99d6',
+  '#c9a4ff','#e0c8ff','#f5d88a',
+  '#ffd6ec','#ffaacc','#ffffff',
+];
+
+function randomColor() {
+  return FW_COLORS[Math.floor(Math.random() * FW_COLORS.length)];
+}
+
+class Rocket {
+  constructor() {
+    this.x  = fwCanvas.width  * (0.2 + Math.random() * 0.6);
+    this.y  = fwCanvas.height;
+    this.tx = fwCanvas.width  * (0.1 + Math.random() * 0.8);
+    this.ty = fwCanvas.height * (0.1 + Math.random() * 0.4);
+    this.speed = 6 + Math.random() * 4;
+    const dx = this.tx - this.x, dy = this.ty - this.y;
+    const d  = Math.hypot(dx, dy);
+    this.vx  = (dx / d) * this.speed;
+    this.vy  = (dy / d) * this.speed;
+    this.trail = [];
+    this.done  = false;
+    this.color = randomColor();
   }
+  update() {
+    this.trail.push({ x: this.x, y: this.y });
+    if (this.trail.length > 12) this.trail.shift();
+    this.x += this.vx;
+    this.y += this.vy;
+    const dx = this.tx - this.x, dy = this.ty - this.y;
+    if (Math.hypot(dx, dy) < this.speed) {
+      explode(this.x, this.y, this.color);
+      this.done = true;
+    }
+  }
+  draw() {
+    for (let i = 0; i < this.trail.length; i++) {
+      const a = (i / this.trail.length) * 0.6;
+      fwCtx.beginPath();
+      fwCtx.arc(this.trail[i].x, this.trail[i].y, 2, 0, Math.PI * 2);
+      fwCtx.fillStyle = this.color.replace(')', `,${a})`).replace('rgb','rgba').replace('#', 'rgba(').replace('rgba(','rgba(');
+      // 간단히 globalAlpha 사용
+      fwCtx.globalAlpha = a;
+      fwCtx.fillStyle = this.color;
+      fwCtx.fill();
+    }
+    fwCtx.globalAlpha = 1;
+    fwCtx.beginPath();
+    fwCtx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+    fwCtx.fillStyle = '#fff';
+    fwCtx.fill();
+  }
+}
+
+class Particle {
+  constructor(x, y, color) {
+    this.x  = x; this.y = y;
+    this.color = color;
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 2 + Math.random() * 5;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * speed;
+    this.life    = 1.0;
+    this.decay   = 0.012 + Math.random() * 0.018;
+    this.gravity = 0.12;
+    this.size    = 2 + Math.random() * 3;
+    // 가끔 별 모양
+    this.isStar  = Math.random() < 0.3;
+  }
+  update() {
+    this.vy  += this.gravity;
+    this.x   += this.vx;
+    this.y   += this.vy;
+    this.vx  *= 0.97;
+    this.vy  *= 0.97;
+    this.life -= this.decay;
+  }
+  draw() {
+    fwCtx.globalAlpha = Math.max(0, this.life);
+    fwCtx.fillStyle   = this.color;
+    if (this.isStar) {
+      drawStar(fwCtx, this.x, this.y, this.size * 1.5);
+    } else {
+      fwCtx.beginPath();
+      fwCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      fwCtx.fill();
+    }
+    fwCtx.globalAlpha = 1;
+  }
+}
+
+function drawStar(ctx, cx, cy, r) {
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++) {
+    const a1 = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+    const a2 = ((i * 4 + 2) * Math.PI) / 5 - Math.PI / 2;
+    i === 0 ? ctx.moveTo(cx + r * Math.cos(a1), cy + r * Math.sin(a1))
+            : ctx.lineTo(cx + r * Math.cos(a1), cy + r * Math.sin(a1));
+    ctx.lineTo(cx + (r * 0.4) * Math.cos(a2), cy + (r * 0.4) * Math.sin(a2));
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+function explode(x, y, color) {
+  const count = 80 + Math.floor(Math.random() * 40);
+  for (let i = 0; i < count; i++) {
+    fwParticles.push(new Particle(x, y, i % 5 === 0 ? '#ffffff' : color));
+  }
+}
+
+function fwLoop() {
+  fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+
+  // 로켓 업데이트
+  fwRockets = fwRockets.filter(r => !r.done);
+  fwRockets.forEach(r => { r.update(); r.draw(); });
+
+  // 파티클 업데이트
+  fwParticles = fwParticles.filter(p => p.life > 0);
+  fwParticles.forEach(p => { p.update(); p.draw(); });
+
+  fwAnimId = requestAnimationFrame(fwLoop);
+}
+
+function launchFireworks() {
+  resizeFwCanvas();
+  fwParticles = [];
+  fwRockets   = [];
+  if (fwAnimId) cancelAnimationFrame(fwAnimId);
+  fwLoop();
+
+  // 5발 연속 발사 후 2초 간격으로 추가 발사
+  let shot = 0;
+  const maxShots = 12;
+  function fire() {
+    if (shot >= maxShots) return;
+    fwRockets.push(new Rocket());
+    if (shot % 2 === 0) fwRockets.push(new Rocket()); // 2발 동시
+    shot++;
+    setTimeout(fire, 350 + Math.random() * 300);
+  }
+  fire();
+
+  // 6초 후 자동 종료
+  setTimeout(stopFireworks, 6000);
+}
+
+function stopFireworks() {
+  if (fwAnimId) {
+    cancelAnimationFrame(fwAnimId);
+    fwAnimId = null;
+  }
+  fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+  fwParticles = [];
+  fwRockets   = [];
 }
 
 // 초기 실행
